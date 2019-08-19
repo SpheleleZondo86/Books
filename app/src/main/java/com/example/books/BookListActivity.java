@@ -1,23 +1,31 @@
 package com.example.books;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 
 public class BookListActivity extends AppCompatActivity {
     private ProgressBar progressBar;
+    private RecyclerView rvBooks;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_list);
         progressBar = findViewById(R.id.pb_loading);
+        rvBooks = findViewById(R.id.rv_books);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
+        rvBooks.setLayoutManager(linearLayoutManager);
         URL bookUrl = ApiUtil.buildUrl("cooking");
         new BooksQueryTask().execute(bookUrl);
 
@@ -39,14 +47,15 @@ public class BookListActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            TextView tvResults = findViewById(R.id.textViewResponse);
             TextView tvError = findViewById(R.id.textViewError);
             progressBar.setVisibility(View.INVISIBLE);
             if (result == null) {
                 tvError.setText(R.string.error_message);
             }
             else {
-                tvResults.setText(result);
+                ArrayList<Book> books = ApiUtil.getBooksFromJson(result);
+                BooksAdapter adapter = new BooksAdapter(books);
+                rvBooks.setAdapter(adapter);
             }
         }
 

@@ -1,13 +1,21 @@
 package com.example.books;
 
+import android.app.job.JobInfo;
 import android.net.Uri;
+import android.util.JsonReader;
 import android.util.Log;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.Timer;
 
 public class ApiUtil {
 
@@ -51,5 +59,46 @@ public class ApiUtil {
         }finally {
             connection.disconnect();
         }
+    }
+
+    public static ArrayList<Book> getBooksFromJson(String json){
+        final String ID = "id";
+        final String TITLE = "title";
+        final String SUBTITLE = "subTitle";
+        final String AUTHORS = "authors";
+        final String PUBLISHER = "publisher";
+        final String PUBLISHED_DATE = "publishedDate";
+        final String ITEMS = "items";
+        final String VOLUME_INFO = "volumeInfo";
+
+
+        ArrayList<Book> books = new ArrayList<>();
+
+        try {
+            JSONObject jsonBooks = new JSONObject(json);
+            JSONArray arrayBooks = jsonBooks.getJSONArray(ITEMS);
+            int numberOfBooks = arrayBooks.length();
+            for(int i=0;i<numberOfBooks;i++){
+                JSONObject bookJSON = arrayBooks.getJSONObject(i);
+                JSONObject volumeInfoJSON = bookJSON.getJSONObject(VOLUME_INFO);
+                int authorNumber = volumeInfoJSON.getJSONArray(AUTHORS).length();
+                String[] authors = new String[authorNumber];
+                for (int j=0;j<authorNumber;j++){
+                    authors[j] = volumeInfoJSON.getJSONArray(AUTHORS).get(j).toString();
+                }
+                Book book = new Book(
+                        bookJSON.getString(ID),
+                        volumeInfoJSON.getString(TITLE),
+                        volumeInfoJSON.isNull(SUBTITLE) ? "" : volumeInfoJSON.getString(SUBTITLE),
+                        authors,
+                        volumeInfoJSON.getString(PUBLISHER),
+                        volumeInfoJSON.isNull(PUBLISHED_DATE) ? "2019-08-16" : volumeInfoJSON.getString(PUBLISHED_DATE)
+                );
+                books.add(book);
+            }
+        }catch (JSONException e){
+            e.getMessage();
+        }
+        return books;
     }
 }

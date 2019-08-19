@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:weightSum="100">
+
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:src="@drawable/book_open"
+        android:layout_weight="15"
+        android:contentDescription="@string/icon" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="85">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvTitle"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="@dimen/title_size"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvAuthors"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="@dimen/authors_size"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="100"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvPublisher"
+                android:layout_weight="70"
+                android:layout_gravity="start"
+                android:textAlignment="textStart"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvPublishedDate"
+                android:layout_weight="30"
+                android:layout_gravity="end"
+                android:textAlignment="textEnd"
+                android:paddingEnd="@dimen/publish_date_padding"
+                android:paddingRight="@dimen/publish_date_padding"
+                android:paddingLeft="@dimen/publish_date_padding"/>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
