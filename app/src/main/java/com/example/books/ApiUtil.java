@@ -64,12 +64,16 @@ public class ApiUtil {
     public static ArrayList<Book> getBooksFromJson(String json){
         final String ID = "id";
         final String TITLE = "title";
-        final String SUBTITLE = "subTitle";
+        final String SUBTITLE = "subtitle";
         final String AUTHORS = "authors";
         final String PUBLISHER = "publisher";
         final String PUBLISHED_DATE = "publishedDate";
         final String ITEMS = "items";
         final String VOLUME_INFO = "volumeInfo";
+        final String DESCRIPTION = "description";
+        final String IMAGE_LINKS = "imageLinks";
+        final String THUMBNAIL = "thumbnail";
+
 
 
         ArrayList<Book> books = new ArrayList<>();
@@ -81,6 +85,7 @@ public class ApiUtil {
             for(int i=0;i<numberOfBooks;i++){
                 JSONObject bookJSON = arrayBooks.getJSONObject(i);
                 JSONObject volumeInfoJSON = bookJSON.getJSONObject(VOLUME_INFO);
+                JSONObject imageLinksJSON = volumeInfoJSON.getJSONObject(IMAGE_LINKS);
                 int authorNumber = volumeInfoJSON.getJSONArray(AUTHORS).length();
                 String[] authors = new String[authorNumber];
                 for (int j=0;j<authorNumber;j++){
@@ -92,7 +97,9 @@ public class ApiUtil {
                         volumeInfoJSON.isNull(SUBTITLE) ? "" : volumeInfoJSON.getString(SUBTITLE),
                         authors,
                         volumeInfoJSON.getString(PUBLISHER),
-                        volumeInfoJSON.isNull(PUBLISHED_DATE) ? "2019-08-16" : volumeInfoJSON.getString(PUBLISHED_DATE)
+                        volumeInfoJSON.isNull(PUBLISHED_DATE) ? "2019-08-16" : volumeInfoJSON.getString(PUBLISHED_DATE),
+                        volumeInfoJSON.isNull(DESCRIPTION) ? "" : volumeInfoJSON.getString(DESCRIPTION),
+                        imageLinksJSON.getString(THUMBNAIL)
                 );
                 books.add(book);
             }

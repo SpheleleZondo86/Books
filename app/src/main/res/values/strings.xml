@@ -3,4 +3,9 @@
     <string name="error_message">Error loading data from Google Book API</string>
     <string name="icon">icon</string>
     <string name="search">search</string>
+    <string name="insert_isbn">Insert ISBN</string>
+    <string name="insert_publisher">Insert Publisher</string>
+    <string name="insert_author">Insert Author</string>
+    <string name="insert_title">Insert Title</string>
+    <string name="advanced_search">Advanced Search</string>
 </resources>
