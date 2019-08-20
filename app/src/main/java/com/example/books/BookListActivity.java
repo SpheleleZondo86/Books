@@ -16,6 +16,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -31,9 +32,18 @@ public class BookListActivity extends AppCompatActivity implements SearchView.On
         rvBooks = findViewById(R.id.rv_books);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         rvBooks.setLayoutManager(linearLayoutManager);
-        URL bookUrl = ApiUtil.buildUrl("cooking");
-        new BooksQueryTask().execute(bookUrl);
-
+        String query = getIntent().getStringExtra("Query");
+        URL bookUrl;
+        try {
+            if (query==null || query.isEmpty()){
+                bookUrl = ApiUtil.buildUrl("cooking");
+            }else {
+                bookUrl = new URL(query);
+            }
+            new BooksQueryTask().execute(bookUrl);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -42,6 +52,12 @@ public class BookListActivity extends AppCompatActivity implements SearchView.On
         final MenuItem searchItem = menu.findItem(R.id.action_search);
         final SearchView searchView = (SearchView)MenuItemCompat.getActionView(searchItem);
         searchView.setOnQueryTextListener(this);
+        ArrayList<String> recentList = SharedPreferencesUtil.getQueryList(getApplicationContext());
+        int itemNum = recentList.size();
+        MenuItem recentMenu;
+        for (int i=0;i<itemNum;i++){
+            recentMenu = menu.add(Menu.NONE, i, Menu.NONE, recentList.get(i));
+        }
         return true;
     }
 
@@ -53,8 +69,22 @@ public class BookListActivity extends AppCompatActivity implements SearchView.On
                 startActivity(intent);
                 return true;
             default:
+                int position = item.getItemId()+1;
+                String preferenceName = SharedPreferencesUtil.QUERY+position;
+                String query = SharedPreferencesUtil.getPrefsString(getApplicationContext(), preferenceName);
+                String[] prefParams = query.split("\\,");
+                String[] queryParams = new String[4];
+                for (int i=0;i<prefParams.length;i++){
+                    queryParams[i] = prefParams[i];
+                }
+                URL bookUrl = ApiUtil.buildUrl(
+                        queryParams[0]==null?"":queryParams[0],
+                        queryParams[1]==null?"":queryParams[1],
+                        queryParams[2]==null?"":queryParams[2],
+                        queryParams[3]==null?"":queryParams[3]
+                );
+                new BooksQueryTask().execute(bookUrl);
                 return super.onOptionsItemSelected(item);
-
         }
     }
 
@@ -64,7 +94,7 @@ public class BookListActivity extends AppCompatActivity implements SearchView.On
            URL bookUrl = ApiUtil.buildUrl(query);
            new BooksQueryTask().execute(bookUrl);
         }catch (Exception e){
-            e.getMessage();
+            e.printStackTrace();
         }
         return false;
     }
